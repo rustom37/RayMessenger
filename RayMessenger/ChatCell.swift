@@ -10,89 +10,64 @@ import UIKit
 
 class ChatCell: UITableViewCell {
 
+    @IBOutlet var bubbleImage: UIImageView!
+    @IBOutlet weak var message: UILabel!
+
+    fileprivate var outgoingLeading: NSLayoutConstraint?
+    fileprivate var outgoingTrailing: NSLayoutConstraint?
+
+    fileprivate var incomingLeading: NSLayoutConstraint?
+    fileprivate var incomingTrailing: NSLayoutConstraint?
+
     override func awakeFromNib() {
         super.awakeFromNib()
+        configureCell()
     }
 
-    func configureCell(sent: Bool, string: String) {
-        if sent == true {
-            showOutgoingMessage(color: UIColor.red, text: string)
-        } else {
-            showIncomingMessage(color: UIColor.green, text: string)
-        }
+    fileprivate func configureCell() {
+        message.numberOfLines = 0
+        message.font = UIFont.systemFont(ofSize: 18)
+        message.textColor = .white
+
+        bubbleImage.translatesAutoresizingMaskIntoConstraints = false
+        bubbleImage.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 15).isActive = true
+        bubbleImage.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -15).isActive = true
+
+        message.translatesAutoresizingMaskIntoConstraints = false
+        message.topAnchor.constraint(equalTo: bubbleImage.topAnchor, constant: 7).isActive = true
+        message.bottomAnchor.constraint(equalTo: bubbleImage.bottomAnchor, constant: -7).isActive = true
+        message.leadingAnchor.constraint(equalTo: bubbleImage.leadingAnchor, constant: 20).isActive = true
+        message.trailingAnchor.constraint(equalTo: bubbleImage.trailingAnchor, constant: -20).isActive = true
+
+
+        outgoingLeading = bubbleImage.leadingAnchor.constraint(greaterThanOrEqualTo: self.contentView.leadingAnchor, constant: 20)
+        outgoingTrailing = bubbleImage.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -20)
+
+        incomingLeading = bubbleImage.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20)
+        incomingTrailing = bubbleImage.trailingAnchor.constraint(lessThanOrEqualTo: self.contentView.trailingAnchor, constant: 20)
     }
 
-    private func showOutgoingMessage(color: UIColor, text: String) {
-        let label =  UILabel()
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 18)
-        label.textColor = .white
-        label.text = text
+    func showOutgoingMessage(color: UIColor, text: String) {
+        message.text = text
+        let bubbleImg = UIImage(named: "outgoing-message-bubble")?.resizableImage(withCapInsets: UIEdgeInsets(top: 17, left: 21, bottom: 17, right: 21), resizingMode: .stretch).withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
+        bubbleImage.image = bubbleImg
+        bubbleImage.tintColor = color
 
-        let constraintRect = CGSize(width: 0.66 * self.contentView.frame.width, height: .greatestFiniteMagnitude)
-        let boundingBox = text.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [.font: label.font], context: nil)
-        label.frame.size = CGSize(width: ceil(boundingBox.width), height: ceil(boundingBox.height))
-
-        let bubbleImageSize = CGSize(width: (label.frame.width) + 28, height: (label.frame.height) + 20)
-
-        let outgoingMessageView = UIImageView(frame: CGRect(x: self.contentView.frame.width - bubbleImageSize.width - 20, y: self.contentView.frame.height - bubbleImageSize.height - 10, width: bubbleImageSize.width, height: bubbleImageSize.height))
-
-        let bubbleImage = UIImage(named: "outgoing-message-bubble")?.resizableImage(withCapInsets: UIEdgeInsets(top: 17, left: 21, bottom: 17, right: 21), resizingMode: .stretch).withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
-
-        outgoingMessageView.image = bubbleImage
-        outgoingMessageView.tintColor = color
-
-        self.contentView.addSubview(outgoingMessageView)
-        outgoingMessageView.translatesAutoresizingMaskIntoConstraints = false
-        print(self.contentView.frame.height - outgoingMessageView.frame.height)
-        outgoingMessageView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: (self.contentView.frame.height - outgoingMessageView.frame.height)/2).isActive = true
-        outgoingMessageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -(self.contentView.frame.height - outgoingMessageView.frame.height)/2).isActive = true
-        outgoingMessageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: (self.contentView.frame.width - outgoingMessageView.frame.width)-20).isActive = true
-        outgoingMessageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -20).isActive = true
-
-
-        label.center = outgoingMessageView.center
-        self.contentView.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.topAnchor.constraint(equalTo: outgoingMessageView.topAnchor).isActive = true
-        label.bottomAnchor.constraint(equalTo: outgoingMessageView.bottomAnchor).isActive = true
-        label.leadingAnchor.constraint(equalTo: outgoingMessageView.leadingAnchor, constant: 10).isActive = true
-        label.trailingAnchor.constraint(equalTo: outgoingMessageView.trailingAnchor, constant: 20).isActive = true
+        outgoingTrailing?.isActive = true
+        outgoingLeading?.isActive = true
+        incomingTrailing?.isActive = false
+        incomingLeading?.isActive = false
     }
 
-    private func showIncomingMessage(color: UIColor, text: String) {
-        let label =  UILabel()
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 18)
-        label.textColor = .white
-        label.text = text
+    func showIncomingMessage(color: UIColor, text: String) {
+        message.text = text
+        let bubbleImg = UIImage(named: "incoming-message-bubble")?.resizableImage(withCapInsets: UIEdgeInsets(top: 17, left: 21, bottom: 17, right: 21), resizingMode: .stretch).withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
+        bubbleImage.image = bubbleImg
+        bubbleImage.tintColor = color
 
-        let constraintRect = CGSize(width: 0.66 * self.contentView.frame.width, height: .greatestFiniteMagnitude)
-        let boundingBox = text.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [.font: label.font], context: nil)
-        label.frame.size = CGSize(width: ceil(boundingBox.width), height: ceil(boundingBox.height))
-        let bubbleImageSize = CGSize(width: (label.frame.width) + 28, height: (label.frame.height) + 20)
-
-        let incomingMessageView = UIImageView(frame: CGRect(x: 0, y: self.contentView.frame.height - bubbleImageSize.height - 20, width: bubbleImageSize.width, height: bubbleImageSize.height))
-
-        let bubbleImage = UIImage(named: "incoming-message-bubble")?.resizableImage(withCapInsets: UIEdgeInsets(top: 17, left: 21, bottom: 17, right: 21))
-
-        incomingMessageView.image = bubbleImage
-        incomingMessageView.tintColor = color
-
-        self.contentView.addSubview(incomingMessageView)
-        incomingMessageView.translatesAutoresizingMaskIntoConstraints = false
-         print(self.contentView.frame.height - incomingMessageView.frame.height)
-        incomingMessageView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: (self.contentView.frame.height - incomingMessageView.frame.height)/2).isActive = true
-        incomingMessageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -(self.contentView.frame.height - incomingMessageView.frame.height)/2).isActive = true
-        incomingMessageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20).isActive = true
-        incomingMessageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -(self.contentView.frame.width - incomingMessageView.frame.width)+20).isActive = true
-
-        label.center = incomingMessageView.center
-        self.contentView.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.topAnchor.constraint(equalTo: incomingMessageView.topAnchor).isActive = true
-        label.bottomAnchor.constraint(equalTo: incomingMessageView.bottomAnchor).isActive = true
-        label.leadingAnchor.constraint(equalTo: incomingMessageView.leadingAnchor, constant: 20).isActive = true
-        label.trailingAnchor.constraint(equalTo: incomingMessageView.trailingAnchor, constant: 10).isActive = true
+        outgoingTrailing?.isActive = false
+        outgoingLeading?.isActive = false
+        incomingTrailing?.isActive = true
+        incomingLeading?.isActive = true
     }
 }

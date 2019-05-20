@@ -11,7 +11,7 @@ import UIKit
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
 
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var entryView: UIView!
+//    @IBOutlet weak var entryView: UIView!
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var sendButton: UIButton!
 
@@ -23,8 +23,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
+        tableView.register(UINib(nibName: "MessageCell", bundle: nil), forCellReuseIdentifier: "chatCell")
 
-        sendButton.tintColor = .lightGray
         configureTableView()
         scrollToBottomOfChat()
         tableView.reloadData()
@@ -48,11 +48,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "chatCell", for: indexPath) as! ChatCell
-        cell.configureCell(sent: messages[indexPath.row].sent, string: messages[indexPath.row].string)
+        if messages[indexPath.row].sent == true {
+            cell.showOutgoingMessage(color: UIColor.purple, text: messages[indexPath.row].string)
+        } else {
+            cell.showIncomingMessage(color: UIColor.orange, text: messages[indexPath.row].string)
+        }
         return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80.0
     }
 

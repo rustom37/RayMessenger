@@ -13,9 +13,9 @@
 		AA9F3600228C206E009C6C24 /* RayMessenger.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = AA9F35FE228C206E009C6C24 /* RayMessenger.xcdatamodeld */; };
 		AA9F3602228C206F009C6C24 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA9F3601228C206F009C6C24 /* Assets.xcassets */; };
 		AA9F3605228C206F009C6C24 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA9F3603228C206F009C6C24 /* LaunchScreen.storyboard */; };
-		AA9F360D228C2187009C6C24 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9F360C228C2187009C6C24 /* Image.swift */; };
 		AA9F360F228C21DE009C6C24 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9F360E228C21DE009C6C24 /* Message.swift */; };
 		AA9F3611228C3719009C6C24 /* ChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9F3610228C3719009C6C24 /* ChatCell.swift */; };
+		AAA87E40228E9C6000785420 /* MessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAA87E3F228E9C6000785420 /* MessageCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,9 +27,9 @@
 		AA9F3601228C206F009C6C24 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA9F3604228C206F009C6C24 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AA9F3606228C206F009C6C24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AA9F360C228C2187009C6C24 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		AA9F360E228C21DE009C6C24 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		AA9F3610228C3719009C6C24 /* ChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCell.swift; sourceTree = "<group>"; };
+		AAA87E3F228E9C6000785420 /* MessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +69,7 @@
 				AA9F3603228C206F009C6C24 /* LaunchScreen.storyboard */,
 				AA9F3606228C206F009C6C24 /* Info.plist */,
 				AA9F35FE228C206E009C6C24 /* RayMessenger.xcdatamodeld */,
-				AA9F360C228C2187009C6C24 /* Image.swift */,
+				AAA87E3F228E9C6000785420 /* MessageCell.xib */,
 				AA9F360E228C21DE009C6C24 /* Message.swift */,
 				AA9F3610228C3719009C6C24 /* ChatCell.swift */,
 			);
@@ -135,6 +135,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA9F3605228C206F009C6C24 /* LaunchScreen.storyboard in Resources */,
+				AAA87E40228E9C6000785420 /* MessageCell.xib in Resources */,
 				AA9F3602228C206F009C6C24 /* Assets.xcassets in Resources */,
 				AA9F35FD228C206E009C6C24 /* Main.storyboard in Resources */,
 			);
@@ -148,7 +149,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA9F3600228C206E009C6C24 /* RayMessenger.xcdatamodeld in Sources */,
-				AA9F360D228C2187009C6C24 /* Image.swift in Sources */,
 				AA9F360F228C21DE009C6C24 /* Message.swift in Sources */,
 				AA9F35FA228C206E009C6C24 /* ViewController.swift in Sources */,
 				AA9F35F8228C206E009C6C24 /* AppDelegate.swift in Sources */,
