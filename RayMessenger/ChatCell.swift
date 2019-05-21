@@ -21,9 +21,13 @@ class ChatCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(selectAllOfLabel))
+        message.isUserInteractionEnabled = true
+        message.addGestureRecognizer(longPress)
         configureCell()
     }
 
+    // MARK: - Cell Configuration
     fileprivate func configureCell() {
         message.numberOfLines = 0
         message.font = UIFont.systemFont(ofSize: 18)
@@ -69,5 +73,39 @@ class ChatCell: UITableViewCell {
         outgoingLeading?.isActive = false
         incomingTrailing?.isActive = true
         incomingLeading?.isActive = true
+    }
+
+    // MARK: - UILabel Add-ons
+    @objc func selectAllOfLabel(recognizer: UIGestureRecognizer) {
+        let loc = recognizer.location(in: self.message)
+        self.message.showMenu(location: loc)
+    }
+}
+
+// MARK: - UILabel Extension
+extension UILabel {
+    override open var canBecomeFirstResponder: Bool {
+        return true
+    }
+
+    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        if action == #selector(copyAll) {
+            return true
+        }
+        return false
+    }
+
+    func showMenu(location: CGPoint) {
+        self.becomeFirstResponder()
+        let menuController = UIMenuController.shared
+        let copyItem = UIMenuItem(title: "Copy", action: #selector(UILabel.copyAll(_:)))
+        menuController.menuItems = [copyItem]
+        let rect = CGRect(x: location.x - 35, y: self.frame.origin.y, width: 50, height: self.frame.height)
+        menuController.setTargetRect(rect, in: self)
+        menuController.setMenuVisible(true, animated: true)
+    }
+
+    @objc func copyAll(_ sender: Any?) {
+        UIPasteboard.general.string = self.text
     }
 }
