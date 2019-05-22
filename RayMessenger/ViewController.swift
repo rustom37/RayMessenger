@@ -14,29 +14,49 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var sendButton: UIButton!
 
-    var messages: [Message] = [Message(string: "Hello, How are you?", sent: false), Message(string: "I'm fine.", sent: true), Message(string: "What did you do today?", sent: false), Message(string: "I went to the Grocery store and bought some potato chips", sent: true), Message(string: "Did you buy me some too? 🥔", sent: false)]
-    
+    var timeToPass = ""
+
+    var messages: [Message] = [Message(string: "Hello, How are you?", sent: false, timeSent: Date()), Message(string: "I'm fine.", sent: true, timeSent: Date()), Message(string: "What did you do today?", sent: false, timeSent: Date()), Message(string: "I went to the Grocery store and bought some potato chips", sent: true, timeSent: Date()), Message(string: "Did you buy me some too? 🥔", sent: false, timeSent: Date())]
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
         tableView.delegate = self
         tableView.dataSource = self
         textField.delegate = self
         tableView.separatorStyle = .none
         tableView.register(UINib(nibName: "MessageCell", bundle: nil), forCellReuseIdentifier: "chatCell")
-        sendButton.tintColor = UIColor.green
 
+        sendButton.tintColor = UIColor.green
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
 
+        setupSide()
+
+
         configureTableView()
         tableView.reloadData()
+    }
+
+    fileprivate func setupSide() {
+        // Define the menus
+        SideManager.default.sideRightNavigationController = storyboard!.instantiateViewController(withIdentifier: "RightNavigationController") as? UISideNavigationController
+
+        // Enable gestures. The left and/or right menus must be set up above for these to work.
+        // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
+        SideManager.default.sideAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
+        //        SideManager.default.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
+        SideManager.default.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forside: UIRectEdge.right)
+
+        // Set up a cool background image for demo purposes
+        SideManager.default.sideAnimationBackgroundColor = UIColor.white
     }
 
     // MARK: - Send Messages
     @IBAction func send(_ sender: Any) {
         if let text = textField.text {
             if text.count > 0 {
-                let message = Message(string: text, sent: true)
+                let message = Message(string: text, sent: true, timeSent: Date())
                 messages.append(message)
                 textField.text = ""
                 tableView.insertRows(at: [IndexPath(row: messages.count-1, section: 0)], with: .none)
@@ -51,13 +71,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let date = "\(Calendar.current.component(.hour, from: messages[indexPath.row].timeSent)):\(Calendar.current.component(.minute, from: messages[indexPath.row].timeSent))"
         let cell = tableView.dequeueReusableCell(withIdentifier: "chatCell", for: indexPath) as! ChatCell
         if messages[indexPath.row].sent == true {
-            cell.showOutgoingMessage(color: UIColor.purple, text: messages[indexPath.row].string)
+            cell.showOutgoingMessage(color: UIColor.purple, text: messages[indexPath.row].string, time: date)
         } else {
-            cell.showIncomingMessage(color: UIColor.orange, text: messages[indexPath.row].string)
+            cell.showIncomingMessage(color: UIColor.orange, text: messages[indexPath.row].string, time: date)
         }
-//        cell.selectionStyle = .none
+        cell.selectionStyle = .none
         return cell
     }
 
@@ -117,9 +138,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
-
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        view.endEditing(true)
-//    }
 }
+
+extension ViewController: UISideNavigationControllerDelegate {
+
+    func sideMenuWillAppear(menu: UISideNavigationController, animated: Bool) {
+        print("SideMenu Appearing! (animated: \(animated))")
+    }
+
+    func sideMenuDidAppear(menu: UISideNavigationController, animated: Bool) {
+        print("SideMenu Appeared! (animated: \(animated))")
+    }
+
+    func sideMenuWillDisappear(menu: UISideNavigationController, animated: Bool) {
+        print("SideMenu Disappearing! (animated: \(animated))")
+    }
+
+    func sideMenuDidDisappear(menu: UISideNavigationController, animated: Bool) {
+        print("SideMenu Disappeared! (animated: \(animated))")
+    }
+
+}
+
 

@@ -29,11 +29,19 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" restorationIdentifier="time" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="egd-20-WkI">
+                        <rect key="frame" x="262" y="42" width="42" height="21"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
             </tableViewCellContentView>
             <connections>
                 <outlet property="bubbleImage" destination="KKK-He-xNm" id="PQM-nS-TH4"/>
                 <outlet property="message" destination="JJ1-5c-I0q" id="p2K-4O-sWF"/>
+                <outlet property="timeSent" destination="egd-20-WkI" id="iIw-q5-9jx"/>
             </connections>
             <point key="canvasLocation" x="438.39999999999998" y="380.95952023988008"/>
         </tableViewCell>
