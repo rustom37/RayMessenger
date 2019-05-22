@@ -5,12 +5,6 @@
 //  Created by Steve Rustom on 5/22/19.
 //  Copyright © 2019 Steve Rustom. All rights reserved.
 //
-//
-//  SideMenuManager.swift
-//
-//  Created by Jon Kent on 12/6/15.
-//  Copyright © 2015 Jon Kent. All rights reserved.
-//
 
 /* Example usage:
  // Define the sides
@@ -27,6 +21,11 @@ import UIKit
 
 @objcMembers
 open class SideManager: NSObject {
+    static let shared = SideManager()
+    public override init() {
+        super.init()
+        transition = SideTransition(sideManager: self)
+    }
 
     @objc public enum SidePushStyle: Int {
         case defaultBehavior,
@@ -82,7 +81,6 @@ open class SideManager: NSObject {
 
      Note that each side's width can be overridden using the `sideWidth` property on any `UIsideNavigationController` instance.
      */
-//    open var sideWidth: CGFloat = min(round(min((appScreenRect.width), (appScreenRect.height)) * 0.75), 240)
     open var sideWidth: CGFloat = appScreenRect.width
 
 
@@ -158,11 +156,6 @@ open class SideManager: NSObject {
 
     internal var transition: SideTransition!
 
-    public override init() {
-        super.init()
-        transition = SideTransition(sideManager: self)
-    }
-
     /**
      The blur effect style of the side if the side's root view controller is a UITableViewController or UICollectionViewController.
 
@@ -173,29 +166,6 @@ open class SideManager: NSObject {
             if oldValue != sideBlurEffectStyle {
                 updatesideBlurIfNecessary()
             }
-        }
-    }
-
-    /// The left side.
-    open var sideLeftNavigationController: UISideNavigationController? {
-        willSet {
-            guard sideLeftNavigationController != newValue, sideLeftNavigationController?.presentingViewController == nil else {
-                return
-            }
-            sideLeftNavigationController?.locked = false
-            removesideBlurForside(sideLeftNavigationController)
-        }
-        didSet {
-            guard sideLeftNavigationController != oldValue else {
-                return
-            }
-            guard oldValue?.presentingViewController == nil else {
-                print("Side Warning: sideLeftNavigationController cannot be modified while it's presented.")
-                sideLeftNavigationController = oldValue
-                return
-            }
-
-            setupNavigationController(sideLeftNavigationController, leftSide: true)
         }
     }
 
@@ -216,15 +186,7 @@ open class SideManager: NSObject {
                 sideRightNavigationController = oldValue
                 return
             }
-            setupNavigationController(sideRightNavigationController, leftSide: false)
-        }
-    }
-
-    /// The left side swipe to dismiss gesture.
-    open weak var sideLeftSwipeToDismissGesture: UIPanGestureRecognizer? {
-        didSet {
-            oldValue?.view?.removeGestureRecognizer(oldValue!)
-            setupGesture(gesture: sideLeftSwipeToDismissGesture)
+            setupNavigationController(sideRightNavigationController/*, leftSide: false*/)
         }
     }
 
@@ -244,23 +206,18 @@ open class SideManager: NSObject {
         gesture.addTarget(transition, action:#selector(SideTransition.handleHideSidePan(_:)))
     }
 
-    fileprivate func setupNavigationController(_ forside: UISideNavigationController?, leftSide: Bool) {
+    fileprivate func setupNavigationController(_ forside: UISideNavigationController?/*, leftSide: Bool*/) {
         guard let forside = forside else {
             return
         }
 
         forside.transitioningDelegate = transition
         forside.modalPresentationStyle = .overFullScreen
-        forside.leftSide = leftSide
 
         if forside.sideManager != self {
-            #if !STFU_side
-            if forside.sideManager?.sideLeftNavigationController == forside {
-                print("side Warning: \(String(describing: forside.self)) was already assigned to the sideLeftNavigationController of \(String(describing: forside.sideManager!.self)). When using multiple sideManagers you may want to use new instances of UIsideNavigationController instead of existing instances to avoid crashes if the side is presented more than once.")
-            } else if forside.sideManager?.sideRightNavigationController == forside {
+           if forside.sideManager?.sideRightNavigationController == forside {
                 print("side Warning: \(String(describing: forside.self)) was already assigned to the sideRightNavigationController of \(String(describing: forside.sideManager!.self)). When using multiple sideManagers you may want to use new instances of UIsideNavigationController instead of existing instances to avoid crashes if the side is presented more than once.")
             }
-            #endif
             forside.sideManager = self
         }
 
@@ -270,11 +227,7 @@ open class SideManager: NSObject {
             let exitPanGesture = UIPanGestureRecognizer()
             exitPanGesture.cancelsTouchesInView = false
             forside.view.addGestureRecognizer(exitPanGesture)
-            if leftSide {
-                sideLeftSwipeToDismissGesture = exitPanGesture
-            } else {
-                sideRightSwipeToDismissGesture = exitPanGesture
-            }
+            sideRightSwipeToDismissGesture = exitPanGesture
         }
 
         // Ensures minimal lag when revealing the side for the first time using gestures by loading the view:
@@ -286,17 +239,12 @@ open class SideManager: NSObject {
     /// Enable or disable gestures that would swipe to dismiss the side. Default is true.
     open var sideEnableSwipeGestures: Bool = true {
         didSet {
-            sideLeftSwipeToDismissGesture?.view?.removeGestureRecognizer(sideLeftSwipeToDismissGesture!)
             sideRightSwipeToDismissGesture?.view?.removeGestureRecognizer(sideRightSwipeToDismissGesture!)
-            setupNavigationController(sideLeftNavigationController, leftSide: true)
-            setupNavigationController(sideRightNavigationController, leftSide: false)
+            setupNavigationController(sideRightNavigationController)
         }
     }
 
     fileprivate func updatesideBlurIfNecessary() {
-        if let sideLeftNavigationController = self.sideLeftNavigationController {
-            setupsideBlurForside(sideLeftNavigationController)
-        }
         if let sideRightNavigationController = self.sideRightNavigationController {
             setupsideBlurForside(sideRightNavigationController)
         }
@@ -357,8 +305,9 @@ open class SideManager: NSObject {
 
      - Returns: The array of screen edge gestures added to `toView`.
      */
-    @discardableResult open func sideAddScreenEdgePanGesturesToPresent(toView: UIView, forside:UIRectEdge? = nil) -> [UIScreenEdgePanGestureRecognizer] {
-        var array = [UIScreenEdgePanGestureRecognizer]()
+//    @discardableResult open func sideAddScreenEdgePanGesturesToPresent(toView: UIView, forside:UIRectEdge? = nil) -> [UIScreenEdgePanGestureRecognizer] {
+    @discardableResult open func sideAddScreenEdgePanGesturesToPresent(toView: UIView) -> [UIScreenEdgePanGestureRecognizer] {
+    var array = [UIScreenEdgePanGestureRecognizer]()
 
         let newScreenEdgeGesture = { () -> UIScreenEdgePanGestureRecognizer in
             let screenEdgeGestureRecognizer = UIScreenEdgePanGestureRecognizer()
@@ -368,49 +317,13 @@ open class SideManager: NSObject {
             return screenEdgeGestureRecognizer
         }
 
-        if forside != .right {
-            let leftScreenEdgeGestureRecognizer = newScreenEdgeGesture()
-            leftScreenEdgeGestureRecognizer.addTarget(transition, action:#selector(SideTransition.handlePresentsideLeftScreenEdge(_:)))
-            leftScreenEdgeGestureRecognizer.edges = .left
+        let rightScreenEdgeGestureRecognizer = newScreenEdgeGesture()
+        rightScreenEdgeGestureRecognizer.addTarget(transition, action:#selector(SideTransition.handlePresentsideRightScreenEdge(_:)))
+        rightScreenEdgeGestureRecognizer.edges = .right
 
-            #if !STFU_side
-            if sideLeftNavigationController == nil {
-                print("side Warning: sideAddScreenEdgePanGesturesToPresent was called before sideLeftNavigationController was set. The gesture will not work without a side. Use sideAddScreenEdgePanGesturesToPresent(toView:forside:) to add gestures for only one side.")
-            }
-            #endif
+        if sideRightNavigationController == nil {
+            print("side Warning: sideAddScreenEdgePanGesturesToPresent was called before sideRightNavigationController was set. The gesture will not work without a side. Use sideAddScreenEdgePanGesturesToPresent(toView:forside:) to add gestures for only one side.")
         }
-
-        if forside != .left {
-            let rightScreenEdgeGestureRecognizer = newScreenEdgeGesture()
-            rightScreenEdgeGestureRecognizer.addTarget(transition, action:#selector(SideTransition.handlePresentsideRightScreenEdge(_:)))
-            rightScreenEdgeGestureRecognizer.edges = .right
-
-            #if !STFU_side
-            if sideRightNavigationController == nil {
-                print("side Warning: sideAddScreenEdgePanGesturesToPresent was called before sideRightNavigationController was set. The gesture will not work without a side. Use sideAddScreenEdgePanGesturesToPresent(toView:forside:) to add gestures for only one side.")
-            }
-            #endif
-        }
-
         return array
-    }
-
-    /**
-     Adds a pan edge gesture to a view to present sides.
-
-     - Parameter toView: The view to add a pan gesture to.
-
-     - Returns: The pan gesture added to `toView`.
-     */
-    @discardableResult open func sideAddPanGestureToPresent(toView: UIView) -> UIPanGestureRecognizer {
-        let panGestureRecognizer = UIPanGestureRecognizer()
-        panGestureRecognizer.addTarget(transition, action:#selector(SideTransition.handlePresentsidePan(_:)))
-        toView.addGestureRecognizer(panGestureRecognizer)
-
-        if sideLeftNavigationController ?? sideRightNavigationController == nil {
-            print("side Warning: sideAddPanGestureToPresent called before sideLeftNavigationController or sideRightNavigationController have been defined. Gestures will not work without a side.")
-        }
-
-        return panGestureRecognizer
     }
 }

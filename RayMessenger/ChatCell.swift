@@ -19,7 +19,7 @@ class ChatCell: UITableViewCell {
 
     fileprivate var incomingLeading: NSLayoutConstraint?
     fileprivate var incomingTrailing: NSLayoutConstraint?
-//    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+    let storyboard = UIStoryboard(name: "Main", bundle: nil)
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -27,28 +27,21 @@ class ChatCell: UITableViewCell {
         message.isUserInteractionEnabled = true
         message.addGestureRecognizer(longPress)
 
-//        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(respondToSwipeGesture))
-//        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
-//        self.addGestureRecognizer(swipeLeft)
-
-
         configureCell()
     }
 
-//    @objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
-//        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
-//            switch swipeGesture.direction {
-//            case .right:
-//                break
-//            case .left:
-//                guard let newViewController = (storyboard.instantiateViewController(withIdentifier: "timeInfoViewController") as? TimeInfoViewController) else { return }
-//                let nav = UINavigationController(rootViewController: newViewController)
-//                self.window?.rootViewController = nav
-//            default:
-//                break
-//            }
-//        }
+//    fileprivate func setupSide() {
+//        // Define the menus
+//        SideManager.default.sideRightNavigationController = storyboard.instantiateViewController(withIdentifier: "RightNavigationController") as? UISideNavigationController
 //
+//        // Enable gestures. The left and/or right menus must be set up above for these to work.
+//        // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
+//        //        SideManager.default.sideAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
+//        //        SideManager.default.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
+//        SideManager.default.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view) //, forside: UIRectEdge.right)
+//
+//        // Set up a cool background image for demo purposes
+//        SideManager.default.sideAnimationBackgroundColor = UIColor.white
 //    }
 
     // MARK: - Cell Configuration
@@ -117,71 +110,6 @@ class ChatCell: UITableViewCell {
         let loc = recognizer.location(in: self.message)
         self.message.showMenu(location: loc)
     }
-
-//    fileprivate func setupSide() {
-//        // Define the menus
-//        SideManager.default.sideRightNavigationController = storyboard!.instantiateViewController(withIdentifier: "RightNavigationController") as? UISideNavigationController
-//
-//        // Enable gestures. The left and/or right menus must be set up above for these to work.
-//        // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
-//        SideManager.default.sideAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
-//        //        SideManager.default.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
-//        SideManager.default.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forside: UIRectEdge.right)
-//
-//        // Set up a cool background image for demo purposes
-//        SideManager.default.sideAnimationBackgroundColor = UIColor.white
-//    }
-
-//    // MARK: - Vibrant Cel
-//    fileprivate var vibrancyView:UIVisualEffectView = UIVisualEffectView()
-//    fileprivate var vibrancySelectedBackgroundView:UIVisualEffectView = UIVisualEffectView()
-//    fileprivate var defaultSelectedBackgroundView:UIView?
-//    open var blurEffectStyle: UIBlurEffect.Style? {
-//        didSet {
-//            updateBlur()
-//        }
-//    }
-//
-//    // For registering with UITableView without subclassing otherwise dequeuing instance of the cell causes an exception
-//    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-//        super.init(style: style, reuseIdentifier: reuseIdentifier)
-//    }
-//
-//    required public init?(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//
-//        vibrancyView.frame = bounds
-//        vibrancyView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-//        for view in subviews {
-//            vibrancyView.contentView.addSubview(view)
-//        }
-//        addSubview(vibrancyView)
-//
-//        let blurSelectionEffect = UIBlurEffect(style: .light)
-//        vibrancySelectedBackgroundView.effect = blurSelectionEffect
-//        defaultSelectedBackgroundView = selectedBackgroundView
-//
-//        updateBlur()
-//    }
-//
-//    internal func updateBlur() {
-//        // shouldn't be needed but backgroundColor is set to white on iPad:
-//        backgroundColor = UIColor.clear
-//
-//        if let blurEffectStyle = blurEffectStyle, !UIAccessibility.isReduceTransparencyEnabled {
-//            let blurEffect = UIBlurEffect(style: blurEffectStyle)
-//            vibrancyView.effect = UIVibrancyEffect(blurEffect: blurEffect)
-//
-//            if selectedBackgroundView != nil && selectedBackgroundView != vibrancySelectedBackgroundView {
-//                vibrancySelectedBackgroundView.contentView.addSubview(selectedBackgroundView!)
-//                selectedBackgroundView = vibrancySelectedBackgroundView
-//            }
-//        } else {
-//            vibrancyView.effect = nil
-//            selectedBackgroundView = defaultSelectedBackgroundView
-//        }
-//    }
-
 }
 
 // MARK: - UILabel Extension

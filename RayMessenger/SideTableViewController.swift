@@ -19,12 +19,6 @@ class SideTableViewController: UITableViewController {
         guard SideManager.default.sideBlurEffectStyle == nil else {
             return
         }
-
-        // Set up a cool background image for demo purposes
-//        let imageView = UIImageView(image: UIImage(named: "saturn"))
-//        imageView.contentMode = .scaleAspectFit
-//        imageView.backgroundColor = UIColor.black.withAlphaComponent(0.2)
-//        tableView.backgroundView = imageView
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -34,6 +28,4 @@ class SideTableViewController: UITableViewController {
 
         return cell
     }
-
-
 }

@@ -5,12 +5,6 @@
 //  Created by Steve Rustom on 5/22/19.
 //  Copyright © 2019 Steve Rustom. All rights reserved.
 //
-//
-//  SideMenuManager.swift
-//
-//  Created by Jon Kent on 12/6/15.
-//  Copyright © 2015 Jon Kent. All rights reserved.
-//
 
 import UIKit
 
@@ -37,9 +31,11 @@ open class SideTransition: UIPercentDrivenInteractiveTransition {
     internal weak var sideManager: SideManager!
     internal weak var mainViewController: UIViewController?
     internal weak var sideViewController: UISideNavigationController? {
-        return presentDirection == .left ? sideManager.sideLeftNavigationController : sideManager.sideRightNavigationController
+        return sideManager.sideRightNavigationController
     }
-    internal var presentDirection: UIRectEdge = .left
+    
+    internal var presentDirection: UIRectEdge = .right
+
     internal weak var tapView: UIView? {
         didSet {
             guard let tapView = tapView else {
@@ -55,22 +51,9 @@ open class SideTransition: UIPercentDrivenInteractiveTransition {
             tapView.addGestureRecognizer(exitTapGesture)
         }
     }
-    internal weak var statusBarView: UIView? {
-        didSet {
-            guard let statusBarView = statusBarView else {
-                return
-            }
-
-            statusBarView.backgroundColor = sideManager.sideAnimationBackgroundColor ?? UIColor.black
-            statusBarView.isUserInteractionEnabled = false
-        }
-    }
 
     required public init(sideManager: SideManager) {
         super.init()
-
-        NotificationCenter.default.addObserver(self, selector:#selector(handleNotification), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector:#selector(handleNotification), name: UIApplication.willChangeStatusBarFrameNotification, object: nil)
         self.sideManager = sideManager
     }
 
@@ -86,22 +69,12 @@ open class SideTransition: UIPercentDrivenInteractiveTransition {
         if let navigationController = forViewController as? UINavigationController {
             return getVisibleViewController(forViewController: navigationController.visibleViewController)
         }
-        if let tabBarController = forViewController as? UITabBarController {
-            return getVisibleViewController(forViewController: tabBarController.selectedViewController)
-        }
-        if let splitViewController = forViewController as? UISplitViewController {
-            return getVisibleViewController(forViewController: splitViewController.viewControllers.last)
-        }
+
         if let presentedViewController = forViewController?.presentedViewController {
             return getVisibleViewController(forViewController: presentedViewController)
         }
 
         return forViewController
-    }
-
-    @objc internal func handlePresentsideLeftScreenEdge(_ edge: UIScreenEdgePanGestureRecognizer) {
-        presentDirection = .left
-        handlePresentsidePan(edge)
     }
 
     @objc internal func handlePresentsideRightScreenEdge(_ edge: UIScreenEdgePanGestureRecognizer) {
@@ -137,7 +110,7 @@ open class SideTransition: UIPercentDrivenInteractiveTransition {
             }
 
             if !(pan is UIScreenEdgePanGestureRecognizer) {
-                presentDirection = translation.x > 0 ? .left : .right
+                presentDirection = .right
             }
 
             if let sideViewController = sideViewController, let visibleViewController = SideTransition.visibleViewController {
@@ -155,10 +128,10 @@ open class SideTransition: UIPercentDrivenInteractiveTransition {
         case .began, .changed:
             if pan is UIScreenEdgePanGestureRecognizer {
                 update(min(distance * direction, 1))
-            } else if distance > 0 && presentDirection == .right && sideManager.sideLeftNavigationController != nil {
+            } else if distance > 0 && presentDirection == .right {
                 presentDirection = .left
                 switchsides = true
-            } else if distance < 0 && presentDirection == .left && sideManager.sideRightNavigationController != nil {
+            } else if distance < 0 && sideManager.sideRightNavigationController != nil {
                 presentDirection = .right
                 switchsides = true
             } else {
@@ -234,8 +207,6 @@ open class SideTransition: UIPercentDrivenInteractiveTransition {
         if statusBarOffset >= CGFloat.ulpOfOne {
             statusBarFrame.size.height = statusBarOffset
         }
-        statusBarView?.frame = statusBarFrame
-        statusBarView?.alpha = 0
 
         switch sideManager.sidePresentMode {
 
@@ -261,7 +232,6 @@ open class SideTransition: UIPercentDrivenInteractiveTransition {
         let mainView = mainViewController?.view
 
         tapView?.removeFromSuperview()
-        statusBarView?.removeFromSuperview()
         mainView?.motionEffects.removeAll()
         mainView?.layer.shadowOpacity = 0
         sideView?.layer.shadowOpacity = 0
@@ -304,8 +274,6 @@ open class SideTransition: UIPercentDrivenInteractiveTransition {
         }
         tapView?.transform = .identity
         tapView?.bounds = mainView.bounds
-        statusBarView?.frame = statusBarFrame
-        statusBarView?.alpha = 1
 
         switch sideManager.sidePresentMode {
 
@@ -362,40 +330,6 @@ open class SideTransition: UIPercentDrivenInteractiveTransition {
 
         return self
     }
-
-    @objc internal func handleNotification(notification: NSNotification) {
-        guard sideViewController?.presentedViewController == nil &&
-            sideViewController?.presentingViewController != nil else {
-                return
-        }
-
-        if let originalSuperview = originalSuperview,
-            let mainViewController = mainViewController,
-            sideManager.sideDismissWhenBackgrounded {
-            originalSuperview.addSubview(mainViewController.view)
-        }
-
-        if notification.name == UIApplication.didEnterBackgroundNotification {
-            if sideManager.sideDismissWhenBackgrounded {
-                hideSideStart().hideSideComplete()
-                sideViewController?.dismiss(animated: false, completion: nil)
-            }
-            return
-        }
-
-        UIView.animate(withDuration: sideManager.sideAnimationDismissDuration,
-                       delay: 0,
-                       usingSpringWithDamping: sideManager.sideAnimationUsingSpringWithDamping,
-                       initialSpringVelocity: sideManager.sideAnimationInitialSpringVelocity,
-                       options: sideManager.sideAnimationOptions,
-                       animations: {
-                        self.hideSideStart()
-        }) { (finished) -> Void in
-            self.hideSideComplete()
-            self.sideViewController?.dismiss(animated: false, completion: nil)
-        }
-    }
-
 }
 
 extension SideTransition: UIViewControllerAnimatedTransitioning {
@@ -440,7 +374,6 @@ extension SideTransition: UIViewControllerAnimatedTransitioning {
 
             if sideManager.sideFadeStatusBar {
                 let statusBarView = UIView()
-                self.statusBarView = statusBarView
                 container.addSubview(statusBarView)
             }
 
@@ -497,10 +430,6 @@ extension SideTransition: UIViewControllerAnimatedTransitioning {
                     }
                     self.tapView = tapView
                 }
-                if let statusBarView = self.statusBarView {
-                    container.bringSubviewToFront(statusBarView)
-                }
-
                 return
             }
 
@@ -558,7 +487,7 @@ extension SideTransition: UIViewControllerTransitioningDelegate {
     // rememeber that an animator (or animation controller) is any object that aheres to the UIViewControllerAnimatedTransitioning protocol
     open func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         self.presenting = true
-        presentDirection = presented == sideManager.sideLeftNavigationController ? .left : .right
+        presentDirection = .right
         return self
     }
 

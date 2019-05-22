@@ -5,12 +5,6 @@
 //  Created by Steve Rustom on 5/22/19.
 //  Copyright © 2019 Steve Rustom. All rights reserved.
 //
-//
-//  SideMenuManager.swift
-//
-//  Created by Jon Kent on 12/6/15.
-//  Copyright © 2015 Jon Kent. All rights reserved.
-//
 
 import UIKit
 
@@ -76,16 +70,6 @@ open class UISideNavigationController: UINavigationController {
         }
     }
 
-    /// Whether the  appears on the right or left side of the screen. Right is the default. This property cannot be changed after the  has loaded.
-    @IBInspectable open var leftSide: Bool = false {
-        didSet {
-            if locked && leftSide != oldValue {
-                print("Side Warning: a 's leftSide property cannot be changed after it has loaded.")
-                leftSide = oldValue
-            }
-        }
-    }
-
     /// Indicates if the  is anywhere in the view hierarchy, even if covered by another view controller.
     open var isHidden: Bool {
         return presentingViewController == nil
@@ -123,11 +107,7 @@ open class UISideNavigationController: UINavigationController {
         super.viewDidLoad()
 
         if !locked && usingInterfaceBuilder {
-            if leftSide {
-                sideManager.sideLeftNavigationController = self
-            } else {
-                sideManager.sideRightNavigationController = self
-            }
+            sideManager.sideRightNavigationController = self
         }
     }
 
@@ -238,13 +218,6 @@ open class UISideNavigationController: UINavigationController {
         // Don't bother resizing if the view isn't visible
         guard !view.isHidden else {
             return
-        }
-
-        NotificationCenter.default.removeObserver(self.transition, name: UIApplication.willChangeStatusBarFrameNotification, object: nil)
-        coordinator.animate(alongsideTransition: { (context) in
-            self.transition.presentsideStart()
-        }) { (context) in
-            NotificationCenter.default.addObserver(self.transition, selector:#selector(SideTransition.handleNotification), name: UIApplication.willChangeStatusBarFrameNotification, object: nil)
         }
     }
 

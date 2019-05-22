@@ -13,7 +13,7 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="RayMessenger" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="viewController" id="BYZ-38-t0r" customClass="ViewController" customModule="RayMessenger" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -94,7 +94,7 @@
             </objects>
             <point key="canvasLocation" x="1044.9275362318842" y="138.58695652173915"/>
         </scene>
-        <!--Root View Controller-->
+        <!--Message Info-->
         <scene sceneID="Mcz-Hj-SrZ">
             <objects>
                 <tableViewController id="HX3-5G-TjV" customClass="SideTableViewController" customModule="RayMessenger" customModuleProvider="target" sceneMemberID="viewController">
@@ -106,7 +106,7 @@
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Z2m-Uq-nCF" customClass="UITableViewVibrantCell" customModule="RayMessenger" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Z2m-Uq-nCF" id="0tR-Pv-Pt5">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Z2m-Uq-nCF" id="0tR-Pv-Pt5" customClass="UITableViewVibrantCell" customModule="RayMessenger" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
@@ -117,7 +117,9 @@
                             <outlet property="delegate" destination="HX3-5G-TjV" id="kmm-uA-Uib"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="P8U-nF-dQl"/>
+                    <navigationItem key="navigationItem" title="Message Info" id="P8U-nF-dQl">
+                        <barButtonItem key="backBarButtonItem" title="hi" id="Iiu-2a-CBS"/>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="t5F-Sx-Qul" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -18,6 +18,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     var messages: [Message] = [Message(string: "Hello, How are you?", sent: false, timeSent: Date()), Message(string: "I'm fine.", sent: true, timeSent: Date()), Message(string: "What did you do today?", sent: false, timeSent: Date()), Message(string: "I went to the Grocery store and bought some potato chips", sent: true, timeSent: Date()), Message(string: "Did you buy me some too? 🥔", sent: false, timeSent: Date())]
 
+    let sideManager = SideManager.shared
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -40,16 +42,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     fileprivate func setupSide() {
         // Define the menus
-        SideManager.default.sideRightNavigationController = storyboard!.instantiateViewController(withIdentifier: "RightNavigationController") as? UISideNavigationController
+        sideManager.sideRightNavigationController = storyboard!.instantiateViewController(withIdentifier: "RightNavigationController") as? UISideNavigationController
 
         // Enable gestures. The left and/or right menus must be set up above for these to work.
         // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
-        SideManager.default.sideAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
+//        SideManager.default.sideAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
         //        SideManager.default.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
-        SideManager.default.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forside: UIRectEdge.right)
+        sideManager.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view) //, forside: UIRectEdge.right)
 
         // Set up a cool background image for demo purposes
-        SideManager.default.sideAnimationBackgroundColor = UIColor.white
+        sideManager.sideAnimationBackgroundColor = UIColor.white
     }
 
     // MARK: - Send Messages
@@ -139,25 +141,3 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         view.endEditing(true)
     }
 }
-
-extension ViewController: UISideNavigationControllerDelegate {
-
-    func sideMenuWillAppear(menu: UISideNavigationController, animated: Bool) {
-        print("SideMenu Appearing! (animated: \(animated))")
-    }
-
-    func sideMenuDidAppear(menu: UISideNavigationController, animated: Bool) {
-        print("SideMenu Appeared! (animated: \(animated))")
-    }
-
-    func sideMenuWillDisappear(menu: UISideNavigationController, animated: Bool) {
-        print("SideMenu Disappearing! (animated: \(animated))")
-    }
-
-    func sideMenuDidDisappear(menu: UISideNavigationController, animated: Bool) {
-        print("SideMenu Disappeared! (animated: \(animated))")
-    }
-
-}
-
-
