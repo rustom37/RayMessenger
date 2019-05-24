@@ -8,6 +8,10 @@
 
 import UIKit
 
+//protocol ChatCellDelegate {
+//    func hasPerformedSwipe(touch: CGPoint)
+//}
+
 class ChatCell: UITableViewCell {
 
     @IBOutlet var bubbleImage: UIImageView!
@@ -19,7 +23,15 @@ class ChatCell: UITableViewCell {
 
     fileprivate var incomingLeading: NSLayoutConstraint?
     fileprivate var incomingTrailing: NSLayoutConstraint?
-    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+//    fileprivate var vibrancyView:UIVisualEffectView = UIVisualEffectView()
+//    fileprivate var vibrancySelectedBackgroundView:UIVisualEffectView = UIVisualEffectView()
+//    fileprivate var defaultSelectedBackgroundView:UIView?
+
+//    var delegate: ChatCellDelegate?
+//    var originalCenter = CGPoint()
+//    var isSwipeSuccessful = false
+//    var touch = CGPoint()
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -27,21 +39,61 @@ class ChatCell: UITableViewCell {
         message.isUserInteractionEnabled = true
         message.addGestureRecognizer(longPress)
 
+//        let pRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
+//        pRecognizer.delegate = self
+//        addGestureRecognizer(pRecognizer)
+
         configureCell()
     }
 
-//    fileprivate func setupSide() {
-//        // Define the menus
-//        SideManager.default.sideRightNavigationController = storyboard.instantiateViewController(withIdentifier: "RightNavigationController") as? UISideNavigationController
+//    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+//        if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
+//            let translation = panGestureRecognizer.translation(in: superview!)
+//            if (abs(translation.x) > abs(translation.y)) && (translation.x < 0){
+//                touch = panGestureRecognizer.location(in: superview)
+//                return true
+//            }
+//            return false
+//        }else if gestureRecognizer is UITapGestureRecognizer {
+//            touch = gestureRecognizer.location(in: superview)
+//            return true
+//        }
+//        return false
+//    }
 //
-//        // Enable gestures. The left and/or right menus must be set up above for these to work.
-//        // Note that these continue to work on the Navigation Controller independent of the View Controller it displays!
-//        //        SideManager.default.sideAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
-//        //        SideManager.default.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
-//        SideManager.default.sideAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view) //, forside: UIRectEdge.right)
+//    @objc func handlePan(_ recognizer: UIPanGestureRecognizer) {
+//        if recognizer.state == .began {
+//            originalCenter = center
+//        }
 //
-//        // Set up a cool background image for demo purposes
-//        SideManager.default.sideAnimationBackgroundColor = UIColor.white
+//        if recognizer.state == .changed {
+//            checkIfSwiped(recognizer: recognizer)
+//            delegate?.hasPerformedSwipe(touch: touch)
+//        }
+//
+//        if recognizer.state == .ended {
+//            let originalFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
+//            if isSwipeSuccessful{
+////                delegate?.hasPerformedSwipe(touch: touch)
+//                moveViewBackIntoPlaceSlowly(originalFrame: originalFrame)
+//            } else {
+//                moveViewBackIntoPlace(originalFrame: originalFrame)
+//            }
+//        }
+//    }
+//
+//    func checkIfSwiped(recognizer: UIPanGestureRecognizer) {
+//        let translation = recognizer.translation(in: self)
+//        center = CGPoint(x: originalCenter.x + max(translation.x, -20), y: originalCenter.y)
+//        isSwipeSuccessful = frame.origin.x < -frame.size.width / 3.0
+//    }
+//
+//    private func moveViewBackIntoPlace(originalFrame: CGRect) {
+//        UIView.animate(withDuration: 0.2, animations: {self.frame = originalFrame})
+//    }
+//
+//    private func moveViewBackIntoPlaceSlowly(originalFrame: CGRect) {
+//        UIView.animate(withDuration: 1.5, animations: {self.frame = originalFrame})
 //    }
 
     // MARK: - Cell Configuration
@@ -67,7 +119,7 @@ class ChatCell: UITableViewCell {
         timeSent.translatesAutoresizingMaskIntoConstraints = false
         timeSent.topAnchor.constraint(equalTo: bubbleImage.topAnchor, constant: 30).isActive = true
         timeSent.bottomAnchor.constraint(equalTo: bubbleImage.bottomAnchor, constant: -5).isActive = true
-         timeSent.leadingAnchor.constraint(equalTo: message.trailingAnchor, constant: 5).isActive = true
+        timeSent.leadingAnchor.constraint(equalTo: message.trailingAnchor, constant: 5).isActive = true
         timeSent.trailingAnchor.constraint(equalTo: bubbleImage.trailingAnchor, constant: -5).isActive = true
 
 
@@ -110,6 +162,50 @@ class ChatCell: UITableViewCell {
         let loc = recognizer.location(in: self.message)
         self.message.showMenu(location: loc)
     }
+
+//    // MARK: - Vibrance Effects
+//    open var blurEffectStyle: UIBlurEffect.Style? {
+//        didSet {
+//            updateBlur()
+//        }
+//    }
+//
+//    // For registering with UITableView without subclassing otherwise dequeuing instance of the cell causes an exception
+//    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+//        super.init(style: style, reuseIdentifier: reuseIdentifier)
+//    }
+//
+//    required public init?(coder aDecoder: NSCoder) {
+//        super.init(coder: aDecoder)
+//
+//        vibrancyView.frame = bounds
+//        vibrancyView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+//        for view in subviews {
+//            vibrancyView.contentView.addSubview(view)
+//        }
+//        addSubview(vibrancyView)
+//
+//        let blurSelectionEffect = UIBlurEffect(style: .light)
+//        vibrancySelectedBackgroundView.effect = blurSelectionEffect
+//        defaultSelectedBackgroundView = selectedBackgroundView
+//
+//        updateBlur()
+//    }
+//
+//    internal func updateBlur() {
+//        if let blurEffectStyle = blurEffectStyle, !UIAccessibility.isReduceTransparencyEnabled {
+//            let blurEffect = UIBlurEffect(style: blurEffectStyle)
+//            vibrancyView.effect = UIVibrancyEffect(blurEffect: blurEffect)
+//
+//            if selectedBackgroundView != nil && selectedBackgroundView != vibrancySelectedBackgroundView {
+//                vibrancySelectedBackgroundView.contentView.addSubview(selectedBackgroundView!)
+//                selectedBackgroundView = vibrancySelectedBackgroundView
+//            }
+//        } else {
+//            vibrancyView.effect = nil
+//            selectedBackgroundView = defaultSelectedBackgroundView
+//        }
+//    }
 }
 
 // MARK: - UILabel Extension
