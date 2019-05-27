@@ -56,19 +56,6 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="80" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="qVJ-e0-KHL" customClass="customTableView" customModule="RayMessenger" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="64" width="414" height="622"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="chatCell" rowHeight="80" id="rTk-KA-PJv" userLabel="chatCell" customClass="ChatCell" customModule="RayMessenger" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="414" height="80"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rTk-KA-PJv" id="hwG-Vn-SDk">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="79.666666666666671"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="yDS-C4-yfm" kind="presentation" trigger="accessoryAction" id="PGQ-4Y-jG6"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </prototypes>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -78,7 +65,7 @@
                             <constraint firstItem="1fZ-xw-5sQ" firstAttribute="top" secondItem="qVJ-e0-KHL" secondAttribute="bottom" id="MCv-yP-Poj"/>
                             <constraint firstItem="1fZ-xw-5sQ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="OY2-oE-T0Q"/>
                             <constraint firstItem="qVJ-e0-KHL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="UxM-nY-fcn"/>
-                            <constraint firstAttribute="bottom" secondItem="1fZ-xw-5sQ" secondAttribute="bottom" id="jeh-sx-yMb"/>
+                            <constraint firstAttribute="bottom" secondItem="1fZ-xw-5sQ" secondAttribute="bottom" id="jeh-sx-yMb" customClass="KeyboardNSLayoutConstraint" customModule="RayMessenger" customModuleProvider="target"/>
                             <constraint firstItem="qVJ-e0-KHL" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="ly0-Ev-EPR"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>

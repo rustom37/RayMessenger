@@ -18,6 +18,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     var originalCenter = CGPoint()
     var currentSwipingCell: UITableViewCell?
+    var newCell: ChatCell?
     var isSwipeSuccessful = false
     var touch = CGPoint()
 
@@ -32,7 +33,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         textField.delegate = self
         tableView.separatorStyle = .none
-        tableView.register(UINib(nibName: "MessageCell", bundle: nil), forCellReuseIdentifier: "chatCell")
+        tableView.register(UINib(nibName: "ChatCell", bundle: nil), forCellReuseIdentifier: "chatCell")
         tableView.keyboardDismissMode = .interactive
 
         let pRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
@@ -54,26 +55,71 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             guard let cell = tableView.cellForRow(at: indexPath) as? ChatCell else { return }
             originalCenter = cell.center
             currentSwipingCell = cell
+            newCell = Bundle.main.loadNibNamed("ChatCell", owner: self, options: nil)?[0] as? ChatCell
+            self.view.addSubview(newCell!)
+            newCell?.translatesAutoresizingMaskIntoConstraints = false
+//            newCell?.widthAnchor.constraint(equalTo: cell.widthAnchor, multiplier: 1.0, constant: 0.0).isActive = true
+//            newCell?.heightAnchor.constraint(equalTo: cell.heightAnchor, multiplier: 1.0, constant: 0.0).isActive = true
+//            newCell?.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
+//            newCell?.centerYAnchor.constraint(equalTo: cell.centerYAnchor).isActive = true
+//            newCell?.frame = CGRect(x: newCell?.frame.origin.x ?? 0.0, y: newCell?.frame.origin.y ?? 0.0, width: cell.bounds.size.width, height: cell.bounds.size.height)
+            let message = messages[indexPath.row]
+            let date = "\(Calendar.current.component(.hour, from: message.timeSent)):\(Calendar.current.component(.minute, from: message.timeSent))"
+            if message.sent == true {
+                newCell?.showOutgoingMessage(color: UIColor.purple, text: message.string, time: date)
+            } else {
+                newCell?.showIncomingMessage(color: UIColor.orange, text: message.string, time: date)
+            }
+            newCell?.selectionStyle = .none
+
+
+
+//            let height = newCell?.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+//            var headerFrame = newCell?.frame
+//
+//            //Comparison necessary to avoid infinite loop
+//            if height != headerFrame?.size.height {
+//                headerFrame?.size.height = height ?? 0.0
+//                newCell?.frame = headerFrame!
+//            }
+//            newCell?.alpha = 1.0
+//            currentSwipingCell?.alpha = 0.0
             tableView.isScrollEnabled = false
         } else if recognizer.state == .changed {
-            if let currentSwipingCell = currentSwipingCell {
+            if let newCell = newCell {
                 var translation = recognizer.translation(in: currentSwipingCell)
                 if translation.x > 0 { translation.x = 0 }
                 let translationValue = max(translation.x, -ViewController.MAX_TRANS_X)
-                var newAlpha = 1.0 - (abs(translationValue*0.7) / ViewController.MAX_TRANS_X)
+                var newAlpha = 1.0 - (abs(translationValue * 0.7) / ViewController.MAX_TRANS_X)
                 if newAlpha < 0.4 { newAlpha = 0.4 }
                 tableView.alpha = newAlpha
-                currentSwipingCell.center = CGPoint(x: originalCenter.x + translationValue, y: originalCenter.y)
-                isSwipeSuccessful = currentSwipingCell.frame.origin.x < -currentSwipingCell.frame.size.width / 3.0
+                newCell.alpha = 1.0
+                newCell.center = tableView.convert(CGPoint(x: originalCenter.x + translationValue, y: originalCenter.y), to: self.view)
+                isSwipeSuccessful = (currentSwipingCell?.frame.origin.x)! < -(currentSwipingCell?.frame.size.width)! / 3.0
             }
+            currentSwipingCell?.alpha = 0.0
         } else {
             tableView.isScrollEnabled = true
             tableView.alpha = 1.0
-            if let currentSwipingCell = currentSwipingCell {
-                let originalFrame = CGRect(x: 0, y: currentSwipingCell.frame.origin.y, width: currentSwipingCell.bounds.size.width, height: currentSwipingCell.bounds.size.height)
-                UIView.animate(withDuration: isSwipeSuccessful ? 1.5 : 0.2, animations: { currentSwipingCell.frame = originalFrame })
+//            newCell?.alpha = 0.0
+//            print("current swiping cell y: \(currentSwipingCell?.frame.origin.y)")
+            if let currentSwipingCell = newCell {
+                guard let indexPath = indexPath else { return }
+//                let originalFrame = CGRect(x: 0, y: currentSwipingCell.frame.origin.y, width: currentSwipingCell.bounds.size.width, height: currentSwipingCell.bounds.size.height)
+                let f = tableView.rectForRow(at: indexPath)
+                let frame = tableView.convert(f, to: tableView.superview)
+//                print("new cell y: \(currentSwipingCell.frame.origin.y)")
+                UIView.animate(withDuration: isSwipeSuccessful ? 1.5 : 0.2, animations: {
+                    currentSwipingCell.frame = frame
+                }) { (finished) in
+                    if finished {
+                        self.newCell?.removeFromSuperview()
+                        self.newCell = nil
+                        self.currentSwipingCell?.alpha = 1.0
+                        self.currentSwipingCell = nil
+                    }
+                }
             }
-            currentSwipingCell = nil
         }
     }
 
@@ -106,12 +152,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let date = "\(Calendar.current.component(.hour, from: messages[indexPath.row].timeSent)):\(Calendar.current.component(.minute, from: messages[indexPath.row].timeSent))"
+        let message = messages[indexPath.row]
+        let date = "\(Calendar.current.component(.hour, from: message.timeSent)):\(Calendar.current.component(.minute, from: message.timeSent))"
         let cell = tableView.dequeueReusableCell(withIdentifier: "chatCell", for: indexPath) as! ChatCell
-        if messages[indexPath.row].sent == true {
-            cell.showOutgoingMessage(color: UIColor.purple, text: messages[indexPath.row].string, time: date)
+        if message.sent == true {
+            cell.showOutgoingMessage(color: UIColor.purple, text: message.string, time: date)
         } else {
-            cell.showIncomingMessage(color: UIColor.orange, text: messages[indexPath.row].string, time: date)
+            cell.showIncomingMessage(color: UIColor.orange, text: message.string, time: date)
         }
 //        cell.delegate = self
         cell.selectionStyle = .none
@@ -138,31 +185,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     //MARK:- TextField Delegate Methods
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        send(self.sendButton)
+        send(self.sendButton as Any)
         self.view.endEditing(true)
         return true
     }
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
         sendButton.isEnabled = true
-        sendButton.tintColor = UIColor.green
-        moveTextField(textField, moveDistance: -208, up: true)
+//        sendButton.tintColor = .green
+//        moveTextField(textField, moveDistance: -208, up: true)
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         sendButton.isEnabled = false
         sendButton.tintColor = .lightGray
-        moveTextField(textField, moveDistance: -208, up: false)
+//        moveTextField(textField, moveDistance: -208, up: false)
     }
 
-    func moveTextField(_ textField: UITextField, moveDistance: Int, up: Bool) {
-        let moveDuration = 0.2
-        let movement: CGFloat = CGFloat(up ? moveDistance : -moveDistance)
-
-        UIView.beginAnimations("animateTextField", context: nil)
-        UIView.setAnimationBeginsFromCurrentState(true)
-        UIView.setAnimationDuration(moveDuration)
-        self.view.frame = self.view.frame.offsetBy(dx: 0, dy: movement)
-        UIView.commitAnimations()
-    }
+//    func moveTextField(_ textField: UITextField, moveDistance: Int, up: Bool) {
+//        let moveDuration = 0.2
+//        let movement: CGFloat = CGFloat(up ? moveDistance : -moveDistance)
+//
+//        UIView.beginAnimations("animateTextField", context: nil)
+//        UIView.setAnimationBeginsFromCurrentState(true)
+//        UIView.setAnimationDuration(moveDuration)
+//        self.view.frame = self.view.frame.offsetBy(dx: 0, dy: movement)
+//        UIView.commitAnimations()
+//    }
 }

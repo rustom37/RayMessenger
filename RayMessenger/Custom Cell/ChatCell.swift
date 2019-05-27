@@ -22,15 +22,15 @@ class ChatCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(selectAllOfLabel))
-        message.isUserInteractionEnabled = true
-        message.addGestureRecognizer(longPress)
-
         configureCell()
     }
 
     // MARK: - Cell Configuration
-    fileprivate func configureCell() {
+    func configureCell() {
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(selectAllOfLabel))
+        message.isUserInteractionEnabled = true
+        message.addGestureRecognizer(longPress)
+
         message.numberOfLines = 0
         message.font = UIFont.systemFont(ofSize: 18)
         message.textColor = .white

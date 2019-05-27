@@ -22,7 +22,7 @@ class MessageInformationViewController: UIViewController, UITableViewDelegate, U
 
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UINib(nibName: "MessageCell", bundle: nil), forCellReuseIdentifier: "chatCell")
+        tableView.register(UINib(nibName: "ChatCell", bundle: nil), forCellReuseIdentifier: "chatCell")
 
         configureTableView()
         tableView.reloadData()

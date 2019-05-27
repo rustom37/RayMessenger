@@ -203,7 +203,7 @@ open class SideManager: NSObject {
             return
         }
 
-        gesture.addTarget(transition, action:#selector(SideTransition.handleHideSidePan(_:)))
+        gesture.addTarget(transition as Any, action:#selector(SideTransition.handleHideSidePan(_:)))
     }
 
     fileprivate func setupNavigationController(_ forside: UISideNavigationController?/*, leftSide: Bool*/) {
@@ -318,7 +318,7 @@ open class SideManager: NSObject {
         }
 
         let rightScreenEdgeGestureRecognizer = newScreenEdgeGesture()
-        rightScreenEdgeGestureRecognizer.addTarget(transition, action:#selector(SideTransition.handlePresentsideRightScreenEdge(_:)))
+        rightScreenEdgeGestureRecognizer.addTarget(transition as Any, action:#selector(SideTransition.handlePresentsideRightScreenEdge(_:)))
         rightScreenEdgeGestureRecognizer.edges = .right
 
         if sideRightNavigationController == nil {
