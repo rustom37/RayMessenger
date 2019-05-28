@@ -118,7 +118,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
                 var newAlpha = 1.0 - (abs(translationValue * 0.7) / ViewController.MAX_TRANS_X)
                 if newAlpha < 0.4 { newAlpha = 0.4 }
-                print("Hello trans is \(translationValue) and alpha is \(newAlpha)")
                 tableView.alpha = newAlpha
                 newCell.alpha = 1.0
                 newCell.center = tableView.convert(CGPoint(x: originalCenter.x + translationValue, y: originalCenter.y), to: self.view)
