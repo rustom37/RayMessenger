@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA5CFA072295352500176931 /* UISideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5CFA062295352500176931 /* UISideNavigationController.swift */; };
-		AA5CFA09229536D300176931 /* SideTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5CFA08229536D300176931 /* SideTransition.swift */; };
-		AA5CFA0B2295389800176931 /* SideManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5CFA0A2295389800176931 /* SideManager.swift */; };
 		AA5CFA1122958F6600176931 /* MessageInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5CFA1022958F6600176931 /* MessageInformationViewController.swift */; };
 		AA9F35F8228C206E009C6C24 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9F35F7228C206E009C6C24 /* AppDelegate.swift */; };
 		AA9F35FA228C206E009C6C24 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9F35F9228C206E009C6C24 /* ViewController.swift */; };
@@ -24,9 +21,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		AA5CFA062295352500176931 /* UISideNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UISideNavigationController.swift; sourceTree = "<group>"; };
-		AA5CFA08229536D300176931 /* SideTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideTransition.swift; sourceTree = "<group>"; };
-		AA5CFA0A2295389800176931 /* SideManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideManager.swift; sourceTree = "<group>"; };
 		AA5CFA1022958F6600176931 /* MessageInformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInformationViewController.swift; sourceTree = "<group>"; };
 		AA9F35F4228C206E009C6C24 /* RayMessenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RayMessenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA9F35F7228C206E009C6C24 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -98,7 +92,6 @@
 			isa = PBXGroup;
 			children = (
 				AA9F35F9228C206E009C6C24 /* ViewController.swift */,
-				AA5CFA062295352500176931 /* UISideNavigationController.swift */,
 				AA5CFA1022958F6600176931 /* MessageInformationViewController.swift */,
 			);
 			path = Controllers;
@@ -124,8 +117,6 @@
 		AACF33C3229BCC4400BDEFE2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				AA5CFA08229536D300176931 /* SideTransition.swift */,
-				AA5CFA0A2295389800176931 /* SideManager.swift */,
 				AACF33BD229BC79A00BDEFE2 /* KeyboardNSLayoutConstraint.swift */,
 			);
 			path = Helpers;
@@ -205,13 +196,10 @@
 			files = (
 				AACF33BE229BC79A00BDEFE2 /* KeyboardNSLayoutConstraint.swift in Sources */,
 				AA9F3600228C206E009C6C24 /* RayMessenger.xcdatamodeld in Sources */,
-				AA5CFA072295352500176931 /* UISideNavigationController.swift in Sources */,
 				AA9F360F228C21DE009C6C24 /* Message.swift in Sources */,
 				AA9F35FA228C206E009C6C24 /* ViewController.swift in Sources */,
 				AA9F35F8228C206E009C6C24 /* AppDelegate.swift in Sources */,
 				AA9F3611228C3719009C6C24 /* ChatCell.swift in Sources */,
-				AA5CFA0B2295389800176931 /* SideManager.swift in Sources */,
-				AA5CFA09229536D300176931 /* SideTransition.swift in Sources */,
 				AA5CFA1122958F6600176931 /* MessageInformationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

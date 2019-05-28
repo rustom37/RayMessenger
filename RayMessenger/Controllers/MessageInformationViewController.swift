@@ -14,18 +14,24 @@ class MessageInformationViewController: UIViewController, UITableViewDelegate, U
     @IBOutlet weak var sent: UILabel!
     @IBOutlet weak var read: UILabel!
 
-    var receivedCell : ChatCell?
-    let sideManager = SideManager.shared
+    var messageReceived: Message?
+    var date = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 100.0
         tableView.register(UINib(nibName: "ChatCell", bundle: nil), forCellReuseIdentifier: "chatCell")
-
-        configureTableView()
         tableView.reloadData()
+
+        if let message = messageReceived {
+            date = "\(Calendar.current.component(.hour, from: message.timeSent)):\(Calendar.current.component(.minute, from: message.timeSent))"
+            sent.text = "Sent on \(date)"
+            read.text = "Read on \(date)"
+        }
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -33,18 +39,10 @@ class MessageInformationViewController: UIViewController, UITableViewDelegate, U
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = receivedCell {
-//            cell.blurEffectStyle =  sideManager.sideBlurEffectStyle
-            cell.showOutgoingMessage(color: UIColor.purple, text: (receivedCell?.message.text)!, time: (receivedCell?.timeSent.text)!)
-            return cell
-        } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "chatCell", for: indexPath) as! ChatCell
-            return cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "chatCell", for: indexPath) as! ChatCell
+        if let message = messageReceived {
+            cell.showOutgoingMessage(color: UIColor.purple, text: message.string, time: date)
         }
-    }
-
-    func configureTableView() {
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 100.0
+        return cell
     }
 }
